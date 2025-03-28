@@ -56,6 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               !currentPath.startsWith('/seller') && 
               !currentPath.startsWith('/admin')) {
       navigate('/seller/dashboard', { replace: true });
+    } else if (role === 'CUSTOMER' && 
+              (currentPath === '/login' || currentPath === '/signup')) {
+      // For customers, redirect from login/signup pages to home page
+      navigate('/', { replace: true });
     }
   };
 
@@ -91,6 +95,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Check if this is the admin user
         if (emailOrUsername === 'admin') {
           role = 'ADMIN';
+        } else if (emailOrUsername === 'seller') {
+          role = 'SELLER';
         }
         // Could add more role checks here if needed
         
@@ -113,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else if (role === 'SELLER') {
           navigate('/seller/dashboard', { replace: true });
         } else {
+          // For CUSTOMER role, redirect to homepage
           navigate('/', { replace: true });
         }
         
@@ -154,9 +161,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return false;
       }
 
-      console.log("Signup successful, logging in...");
-      // After successful signup, login with the same credentials
-      return login(username, password);
+      console.log("Signup successful, creating user...");
+      
+      // Create the user directly instead of calling login again
+      const userData: User = {
+        id: "1", // Default ID
+        username,
+        name: name || username,
+        email,
+        role: 'CUSTOMER',
+        createdAt: new Date().toISOString(),
+      };
+
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Redirect to homepage after successful signup
+      navigate('/', { replace: true });
+      
+      return true;
     } catch (error) {
       console.error("Signup error:", error);
       return false;

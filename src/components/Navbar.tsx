@@ -97,14 +97,14 @@ const Navbar = () => {
           : 'bg-transparent py-6'
       }`}
     >
-      <div className="container mx-auto px-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="font-serif text-2xl font-bold tracking-tight">
+        <Link to="/" className="font-serif text-2xl font-bold tracking-tight mr-4">
           Art<span className="text-[#AA8F66]">Auction</span>
         </Link>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center justify-center flex-1 space-x-8">
+        <nav className="hidden md:flex items-center justify-center space-x-8 flex-1">
           <Link 
             to="/" 
             className={`nav-link ${location.pathname === '/' ? 'text-[#AA8F66] after:w-full' : ''}`}
@@ -129,7 +129,13 @@ const Navbar = () => {
           >
             About
           </Link>
-          {user && isSeller && (
+          <Link 
+            to="/faqs" 
+            className={`nav-link ${location.pathname === '/faqs' ? 'text-[#AA8F66] after:w-full' : ''}`}
+          >
+            FAQs
+          </Link>
+          {user && isSeller() && (
             <Link 
               to="/seller/dashboard" 
               className={`nav-link ${location.pathname.startsWith('/seller') ? 'text-[#AA8F66] after:w-full' : ''}`}
@@ -141,12 +147,22 @@ const Navbar = () => {
 
         {/* Search and Profile */}
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsSearchOpen(true)}
-            className="p-2 rounded-lg hover:bg-[#AA8F66]/10 transition-colors"
-          >
-            <Search size={20} className="text-[#5A3A31]" />
-          </button>
+          {user && !isSeller() ? (
+            <Button 
+              variant="outline" 
+              className="border-[#AA8F66] text-[#AA8F66] hover:bg-[#AA8F66]/10"
+              asChild
+            >
+              <Link to="/seller-application">Become a Seller</Link>
+            </Button>
+          ) : !user && (
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2 rounded-lg hover:bg-[#AA8F66]/10 transition-colors"
+            >
+              <Search size={20} className="text-[#5A3A31]" />
+            </button>
+          )}
 
           {user ? (
             <DropdownMenu>
@@ -162,7 +178,7 @@ const Navbar = () => {
                 <DropdownMenuItem asChild>
                   <Link to="/profile">Profile</Link>
                 </DropdownMenuItem>
-                {!isSeller && (
+                {!isSeller() && (
                   <DropdownMenuItem asChild>
                     <Link to="/seller-application">Become a Seller</Link>
                   </DropdownMenuItem>
@@ -234,7 +250,15 @@ const Navbar = () => {
                     About
                   </Link>
                 </li>
-                {user && isSeller && (
+                <li>
+                  <Link 
+                    to="/faqs" 
+                    className="block p-2 hover:bg-[#AA8F66]/10 rounded-lg"
+                  >
+                    FAQs
+                  </Link>
+                </li>
+                {user && isSeller() && (
                   <li>
                     <Link 
                       to="/seller/dashboard" 
