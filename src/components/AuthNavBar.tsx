@@ -59,11 +59,15 @@ export default function AuthNavBar() {
             </>
           ) : (
             <>
-              <Link to="/" className="font-bold text-xl">ArtAuction</Link>
+              <Link to="/" className="font-serif text-2xl font-bold tracking-tight">
+                Art<span className="text-[#AA8F66]">Auction</span>
+              </Link>
               <div className="hidden md:flex gap-4">
+                <Link to="/" className="text-sm font-medium hover:underline">Home</Link>
                 <Link to="/auctions" className="text-sm font-medium hover:underline">Auctions</Link>
                 <Link to="/artists" className="text-sm font-medium hover:underline">Artists</Link>
                 <Link to="/about" className="text-sm font-medium hover:underline">About</Link>
+                <Link to="/faqs" className="text-sm font-medium hover:underline">FAQs</Link>
               </div>
             </>
           )}

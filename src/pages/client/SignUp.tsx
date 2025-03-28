@@ -55,7 +55,11 @@ export default function SignUp() {
     try {
       const success = await signup(values.username, values.email, values.password, values.name);
       if (success) {
-        toast.success("Account created successfully");
+        toast.success(`Account created successfully! Welcome, ${values.name || values.username}`, {
+          position: "top-center",
+          duration: 3000,
+          icon: "✓"
+        });
         navigate("/login");
       } else {
         toast.error("Failed to create account");

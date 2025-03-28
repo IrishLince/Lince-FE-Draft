@@ -143,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   };
 
   return (

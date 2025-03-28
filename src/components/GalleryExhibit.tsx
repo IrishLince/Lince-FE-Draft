@@ -1,188 +1,157 @@
+import React from "react";
+import styled from "styled-components";
+import { artworks } from "../data/artworks";
 
-import React, { useRef, useEffect, useState } from 'react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Artwork } from '../data/artworks';
-import { ChevronLeft, ChevronRight, Info } from 'lucide-react';
-import { Link } from 'react-router-dom';
+const generateArtworks = (artworks) => {
+  const finalArtworks = [];
+  while (finalArtworks.length < 10) {
+    const randomIndex = Math.floor(Math.random() * artworks.length);
+    finalArtworks.push(artworks[randomIndex]);
+  }
+  return finalArtworks;
+};
 
-interface GalleryExhibitProps {
-  featuredArtworks: Artwork[];
-}
-
-const GalleryExhibit: React.FC<GalleryExhibitProps> = ({ featuredArtworks }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [showInfo, setShowInfo] = useState(false);
-  
-  const activeArtwork = featuredArtworks[activeIndex];
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const container = containerRef.current;
-    let animationFrameId: number;
-    let mouseX = 0;
-    let mouseY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-    };
-    
-    const handleDeviceOrientation = (e: DeviceOrientationEvent) => {
-      if (e.beta && e.gamma) {
-      }
-    };
-    
-    const animate = () => {
-      const easeValue = 0.03;
-      currentX += (mouseX - currentX) * easeValue;
-      currentY += (mouseY - currentY) * easeValue;
-      
-      const mainImage = container.querySelector('.main-artwork') as HTMLElement;
-      if (mainImage) {
-        const moveX = currentX * 15;
-        const moveY = currentY * 15;
-        mainImage.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
-      }
-      
-      const background = container.querySelector('.exhibit-background') as HTMLElement;
-      if (background) {
-        const moveX = currentX * -10;
-        const moveY = currentY * -10;
-        background.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
-      }
-      
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    
-    if (isMobile) {
-      window.addEventListener('deviceorientation', handleDeviceOrientation);
-    } else {
-      container.addEventListener('mousemove', handleMouseMove);
-    }
-    
-    animationFrameId = requestAnimationFrame(animate);
-    
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      if (isMobile) {
-        window.removeEventListener('deviceorientation', handleDeviceOrientation);
-      } else {
-        container.removeEventListener('mousemove', handleMouseMove);
-      }
-    };
-  }, [isMobile, activeIndex]);
-
-  const nextArtwork = () => {
-    setActiveIndex((prev) => (prev + 1) % featuredArtworks.length);
-    setShowInfo(false);
-  };
-
-  const prevArtwork = () => {
-    setActiveIndex((prev) => (prev - 1 + featuredArtworks.length) % featuredArtworks.length);
-    setShowInfo(false);
-  };
+const Card = () => {
+  const artworkList = generateArtworks(artworks);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative h-[300px] md:h-[500px] w-full overflow-hidden rounded-lg shadow-subtle"
-    >
-      {/* Exhibit Background */}
-      <div className="exhibit-background bg-no-repeat bg-cover bg-center bg-[url('https://en.idei.club/uploads/posts/2023-06/thumbs/1685833682_en-idei-club-p-yale-art-gallery-dizain-krasivo-3.jpg')] absolute inset-0 bg-gradient-to-b from-gallery-cream to-gallery-beige/30 opacity-70"></div>
-
-      {/* Main Artwork */}
-      <div className="relative h-full w-full flex items-center justify-center">
-        <div className="absolute inset-0 z-0 flex items-center justify-center bg-black/30 overflow-hidden">
-          <img
-            src={activeArtwork.image}
-            alt={activeArtwork.title}
-            className="main-artwork object-contain max-h-[80%] max-w-[80%] shadow-lg shadow-white/70 rounded"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "/placeholder.svg";
-            }}
-          />
-        </div>
-
-        {/* Navigation Controls */}
-        <button
-          onClick={prevArtwork}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-subtle hover:bg-white transition-all duration-300"
-          aria-label="Previous artwork"
-        >
-          <ChevronLeft size={20} />
-        </button>
-
-        <button
-          onClick={nextArtwork}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-subtle hover:bg-white transition-all duration-300"
-          aria-label="Next artwork"
-        >
-          <ChevronRight size={20} />
-        </button>
-
-        {/* Info Button */}
-        <button
-          onClick={() => setShowInfo(!showInfo)}
-          className="absolute bottom-4 right-4 z-10 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-subtle hover:bg-white transition-all duration-300"
-          aria-label="Artwork information"
-        >
-          <Info size={20} />
-        </button>
-
-        {/* Artwork Info Panel */}
-        <div
-          className={`absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md p-4 transform transition-transform duration-300 ${
-            showInfo ? "translate-y-0" : "translate-y-full"
-          }`}
-        >
-          <h3 className="text-lg md:text-xl font-display font-medium mb-1">
-            {activeArtwork.title}
-          </h3>
-          <p className="text-sm text-gallery-text/70 mb-2">
-            by {activeArtwork.artist}
-          </p>
-          <p className="text-sm text-gallery-text/80 line-clamp-2 mb-2">
-            {activeArtwork.description}
-          </p>
-          <Link
-            to={`/artwork/${activeArtwork.id}`}
-            className="text-sm text-gallery-accent hover:text-gallery-accent/80 inline-block"
-          >
-            View auction details
-          </Link>
-        </div>
-      </div>
-
-      {/* Navigation Indicators */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-        {featuredArtworks.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              setActiveIndex(index);
-              setShowInfo(false);
-            }}
-            className={`h-2 w-2 rounded-full transition-all ${
-              activeIndex === index
-                ? "bg-gallery-accent w-4"
-                : "bg-gallery-accent/40 hover:bg-gallery-accent/60"
-            }`}
-            aria-label={`Show artwork ${index + 1}`}
-          />
+    <StyledWrapper>
+      <div className="card-3d">
+        {artworkList.map((artwork, index) => (
+          <div key={index} className="card-item">
+            <img
+              src={artwork.image}
+              alt={artwork.title}
+              className="art-image"
+            />
+            <p className="art-title">{artwork.title}</p>
+          </div>
         ))}
       </div>
-
-      <div className="absolute top-16 left-0 right-0 text-center">
-        <p className="text-sm text-gallery-text/60 italic">
-        </p>
-      </div>
-    </div>
+    </StyledWrapper>
   );
 };
 
-export default GalleryExhibit;
+const StyledWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+
+  @keyframes autoRun3d {
+    from {
+      transform: perspective(600px) rotateY(-360deg);
+    }
+    to {
+      transform: perspective(600px) rotateY(0deg);
+    }
+  }
+
+  @keyframes animateBrightness {
+    10% {
+      filter: brightness(1);
+    }
+    50% {
+      filter: brightness(0.2);
+    }
+    90% {
+      filter: brightness(1);
+    }
+  }
+
+  .card-3d {
+    position: relative;
+    width: 700px;
+    height: 500px;
+    transform-style: preserve-3d;
+    transform: perspective(1400px);
+    animation: autoRun3d 20s linear infinite;
+    will-change: transform;
+  }
+
+  .card-item {
+    position: absolute;
+    width: 140px;
+    height: 200px;
+    background-color: rgb(199, 199, 199);
+    border-radius: 0.75rem;
+    top: 50%;
+    left: 50%;
+    transform-origin: center center;
+    animation: animateBrightness 20s linear infinite;
+    transition-duration: 200ms;
+    will-change: transform, filter;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .art-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.75rem;
+  }
+
+  .art-title {
+    font-size: 0.8rem;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 5px;
+    position: absolute;
+    top: 105%;
+    width: 100%;
+  }
+
+  .card-3d:hover {
+    animation-play-state: paused !important;
+  }
+
+  .card-3d:hover .card-item {
+    animation-play-state: paused !important;
+  }
+
+  .card-item:nth-child(1) {
+    transform: translate(-50%, -50%) rotateY(0deg) translateZ(350px);
+    animation-delay: -0s;
+  }
+  .card-item:nth-child(2) {
+    transform: translate(-50%, -50%) rotateY(36deg) translateZ(350px);
+    animation-delay: -2s;
+  }
+  .card-item:nth-child(3) {
+    transform: translate(-50%, -50%) rotateY(72deg) translateZ(350px);
+    animation-delay: -4s;
+  }
+  .card-item:nth-child(4) {
+    transform: translate(-50%, -50%) rotateY(108deg) translateZ(350px);
+    animation-delay: -6s;
+  }
+  .card-item:nth-child(5) {
+    transform: translate(-50%, -50%) rotateY(144deg) translateZ(350px);
+    animation-delay: -8s;
+  }
+  .card-item:nth-child(6) {
+    transform: translate(-50%, -50%) rotateY(180deg) translateZ(350px);
+    animation-delay: -10s;
+  }
+  .card-item:nth-child(7) {
+    transform: translate(-50%, -50%) rotateY(216deg) translateZ(350px);
+    animation-delay: -12s;
+  }
+  .card-item:nth-child(8) {
+    transform: translate(-50%, -50%) rotateY(252deg) translateZ(350px);
+    animation-delay: -14s;
+  }
+  .card-item:nth-child(9) {
+    transform: translate(-50%, -50%) rotateY(288deg) translateZ(350px);
+    animation-delay: -16s;
+  }
+  .card-item:nth-child(10) {
+    transform: translate(-50%, -50%) rotateY(324deg) translateZ(350px);
+    animation-delay: -18s;
+  }
+`;
+
+export default Card;

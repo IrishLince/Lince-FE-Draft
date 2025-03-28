@@ -47,7 +47,11 @@ export default function Login() {
     try {
       const success = await login(values.emailOrUsername, values.password);
       if (success) {
-        toast.success("Logged in successfully");
+        toast.success("Welcome back! You've successfully logged in", {
+          position: "top-center",
+          duration: 3000,
+          icon: "✓"
+        });
         // Navigate to the return URL
         navigate(from, { replace: true });
       } else {

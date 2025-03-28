@@ -26,6 +26,7 @@ import ResetPassword from "./pages/client/ResetPassword";
 import SellerApplication from "./pages/client/SellerApplication";
 import SellerDashboard from "./pages/seller/Dashboard";
 import AdminProfile from "./pages/admin/Profile";
+import FAQSs from "./pages/client/FAQsPage";
 
 // Create a client with default options for React Query
 const queryClient = new QueryClient({
@@ -103,6 +104,7 @@ const AppRoutes = () => {
       <Route path="/artists" element={<ArtistsPage />} />
       <Route path="/artist/:id" element={<ArtistDetailPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/faqs" element={<FAQSs />} />
       
       {/* Protected Routes */}
       <Route path="/profile" element={

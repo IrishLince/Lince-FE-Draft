@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronRight, Search, User } from 'lucide-react';
+import { Menu, X, ChevronRight, Search, User, Plus } from 'lucide-react';
 import { Input } from './ui/input';
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { toast } from './ui/use-toast';
@@ -129,29 +129,45 @@ const Navbar = () => {
           >
             About
           </Link>
+          <Link 
+            to="/faqs" 
+            className={`nav-link ${location.pathname === '/faqs' ? 'text-gallery-accent after:w-full' : ''}`}
+          >
+            FAQs
+          </Link>
         </nav>
         
         {/* Search and Profile */}
         <div className="flex items-center gap-4">
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="rounded-full" size="icon">
-                  <Avatar>
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-                  </Avatar>
+            <>
+              {user.role !== "SELLER" && user.role !== "ADMIN" && (
+                <Button asChild className="bg-[#AA8F66] hover:bg-[#AA8F66]/90 text-white">
+                  <Link to="/seller-application" className="inline-flex items-center gap-2">
+                    <Plus size={20} />
+                    Become a Seller
+                  </Link>
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem className="font-medium">{user.name}</DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/profile">Profile</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="rounded-full" size="icon">
+                    <Avatar>
+                      <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem className="font-medium">{user.name}</DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           ) : (
             <div className="flex items-center gap-2">
               <Button variant="outline" className="border-[#AA8F66] text-[#AA8F66] hover:bg-[#AA8F66]/10" asChild>
@@ -240,6 +256,12 @@ const Navbar = () => {
               className="flex justify-between items-center text-xl font-medium py-2 border-b border-gallery-border"
             >
               About <ChevronRight size={18} />
+            </Link>
+            <Link
+              to="/faqs"
+              className="flex justify-between items-center text-xl font-medium py-2 border-b border-gallery-border"
+            >
+              FAQs <ChevronRight size={18} />
             </Link>
             <Link 
               to="/profile" 
