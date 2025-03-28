@@ -22,31 +22,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// Test users for demo purposes
-const TEST_USERS = [
-  {
-    username: 'admin',
-    email: 'admin@example.com',
-    password: 'admin123',
-    role: 'ADMIN' as const,
-    name: 'Admin User'
-  },
-  {
-    username: 'seller',
-    email: 'seller@example.com',
-    password: 'seller123',
-    role: 'SELLER' as const,
-    name: 'Seller User'
-  },
-  {
-    username: 'customer',
-    email: 'customer@example.com',
-    password: 'customer123',
-    role: 'CUSTOMER' as const,
-    name: 'Customer User'
-  }
-];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,10 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
         
-        // If user is admin and trying to access non-admin routes, redirect to admin dashboard
-        if (parsedUser.role === 'ADMIN' && !location.pathname.startsWith('/admin')) {
-          navigate('/admin/dashboard', { replace: true });
-        }
+        // Route users based on role
+        routeUserBasedOnRole(parsedUser.role, location.pathname);
       }
       setLoading(false);
     };
@@ -74,44 +47,80 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Helper functions for role checking
   const isAdmin = () => user?.role === 'ADMIN';
   const isSeller = () => user?.role === 'SELLER' || user?.role === 'ADMIN';
+  
+  // Function to route users based on their role
+  const routeUserBasedOnRole = (role: string, currentPath: string) => {
+    if (role === 'ADMIN' && !currentPath.startsWith('/admin')) {
+      navigate('/admin/dashboard', { replace: true });
+    } else if (role === 'SELLER' && 
+              !currentPath.startsWith('/seller') && 
+              !currentPath.startsWith('/admin')) {
+      navigate('/seller/dashboard', { replace: true });
+    }
+  };
 
   const login = async (emailOrUsername: string, password: string): Promise<boolean> => {
     try {
-      const testUser = TEST_USERS.find(user => 
-        (user.username === emailOrUsername || user.email === emailOrUsername) && 
-        user.password === password
-      );
+      console.log("Attempting backend login with:", emailOrUsername);
       
-      if (testUser) {
+      const response = await fetch("http://localhost:8080/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: emailOrUsername, password }),
+      });
+
+      console.log("Backend login response status:", response.status);
+
+      if (!response.ok) {
+        console.error("Backend login failed with status:", response.status);
+        return false;
+      }
+
+      const data = await response.json();
+      console.log("Backend login response data:", data);
+      
+      // The backend returns {status: true, statusCode: 200, message: 'Successfully logged in.'}
+      // And doesn't include user data in the response
+      if (data.status === true) {
+        // Since the login was successful but we don't have user data in the response,
+        // we need to create a basic user object with the role based on the credentials
+        let role = 'CUSTOMER';
+        
+        // Check if this is the admin user
+        if (emailOrUsername === 'admin') {
+          role = 'ADMIN';
+        }
+        // Could add more role checks here if needed
+        
         const userData: User = {
-          id: `user-${testUser.username}`,
-          username: testUser.username,
-          email: testUser.email,
-          role: testUser.role,
-          name: testUser.name,
-          createdAt: new Date().toISOString()
+          id: "1", // Default ID
+          username: emailOrUsername,
+          name: emailOrUsername, // Use username as display name
+          email: emailOrUsername.includes('@') ? emailOrUsername : `${emailOrUsername}@example.com`,
+          role: role as 'CUSTOMER' | 'SELLER' | 'ADMIN',
+          createdAt: new Date().toISOString(),
         };
+
+        console.log("Created user data with role:", role);
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
         
-        // Redirect admin users to admin dashboard after login
-        if (testUser.role === 'ADMIN') {
+        // Redirect based on role
+        if (role === 'ADMIN') {
           navigate('/admin/dashboard', { replace: true });
+        } else if (role === 'SELLER') {
+          navigate('/seller/dashboard', { replace: true });
+        } else {
+          navigate('/', { replace: true });
         }
+        
         return true;
-      } else if (emailOrUsername && password) {
-        const userData: User = {
-          id: "user-" + Math.random().toString(36).substring(2, 9),
-          username: emailOrUsername.includes('@') ? emailOrUsername.split('@')[0] : emailOrUsername,
-          email: emailOrUsername.includes('@') ? emailOrUsername : `${emailOrUsername}@example.com`,
-          role: 'CUSTOMER',
-          createdAt: new Date().toISOString(),
-        };
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-        return true;
+      } else {
+        console.error("Login failed - invalid response format");
+        return false;
       }
-      return false;
     } catch (error) {
       console.error("Login error:", error);
       return false;
@@ -120,20 +129,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signup = async (username: string, email: string, password: string, name?: string): Promise<boolean> => {
     try {
-      if (username && email && password) {
-        const userData: User = {
-          id: "user-" + Math.random().toString(36).substring(2, 9),
+      console.log("Attempting signup with username:", username, "email:", email);
+      
+      const response = await fetch("http://localhost:8080/api/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           username,
-          name,
+          firstName: name?.split(' ')[0] || '',
+          lastName: name?.split(' ')[1] || '',
           email,
-          role: 'CUSTOMER',
-          createdAt: new Date().toISOString(),
-        };
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-        return true;
+          password,
+          role: "CUSTOMER" // Default role for sign up
+        }),
+      });
+
+      console.log("Signup response status:", response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Signup failed:", errorData);
+        return false;
       }
-      return false;
+
+      console.log("Signup successful, logging in...");
+      // After successful signup, login with the same credentials
+      return login(username, password);
     } catch (error) {
       console.error("Signup error:", error);
       return false;
@@ -143,7 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    navigate('/', { replace: true });
+    navigate('/login', { replace: true });
   };
 
   return (

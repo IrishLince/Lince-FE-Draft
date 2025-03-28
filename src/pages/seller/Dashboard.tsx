@@ -7,8 +7,8 @@ import {
   CreditCard, 
   Bell,
 } from 'lucide-react';
-import SellerNavbar from '../../components/SellerNavbar';
 import TransactionPayment from '../../components/TransactionPayment';
+import SellerLayout from '@/components/Layout/SellerLayout';
 
 const mockSellerData = {
   pendingItems: [
@@ -308,43 +308,13 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-white to-[#AA8F66]/20">
-      <SellerNavbar />
-      {/* Sidebar */}
-      <div className="w-72 bg-white shadow-2xl fixed left-0 top-0 bottom-0 z-20 rounded-r-3xl">
-        <div className="p-6 border-b border-[#AA8F66]/20">
-          <h1 className="text-2xl font-extrabold text-center bg-gradient-to-r from-[#5A3A31] to-[#AA8F66] bg-clip-text text-transparent">
-            Seller Dashboard
-          </h1>
+    <SellerLayout>
+      <div className="min-h-screen bg-gradient-to-br from-white to-[#AA8F66]/5">
+        <div className="container mx-auto pb-16">
+          {renderDashboardContent()}
         </div>
-        <nav className="p-4 space-y-4 mt-4">
-          {[
-            { key: 'dashboard', icon: Users, label: 'Dashboard' },
-            { key: 'market-insights', icon: TrendingUp, label: 'Market Insights' },
-            { key: 'my-items', icon: Package, label: 'My Items' },
-            { key: 'transaction-payment', icon: CreditCard, label: 'Transaction Payment' },
-          ].map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setActiveTab(item.key)}
-              className={`w-full text-left p-4 rounded-xl flex items-center transition-all ${
-                activeTab === item.key
-                  ? 'bg-[#AA8F66]/20 text-[#5A3A31] font-bold shadow-md'
-                  : 'text-[#5A3A31]/70 hover:bg-[#AA8F66]/10 hover:text-[#5A3A31]'
-              }`}
-            >
-              <item.icon className="mr-4 w-6 h-6" />
-              <span className="text-lg">{item.label}</span>
-            </button>
-          ))}
-        </nav>
       </div>
-
-      {/* Main Content Area */}
-      <div className="ml-72 flex-1 p-10 overflow-y-auto mt-16">
-        {renderDashboardContent()}
-      </div>
-    </div>
+    </SellerLayout>
   );
 };
 

@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,31 +14,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
-
-// Import auction image
 import auctionImage from "@/components/Picture/Leftsidepic.png";
-// Fallback image
+
 const fallbackImage = "https://images.unsplash.com/photo-1605433276792-2e53778f269a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80";
 
-const formSchema = z.object({
-  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
-  firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
-  lastName: z.string().min(2, { message: "Last name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string().min(6, { message: "Please confirm your password" }),
-  agreeTerms: z.boolean().refine(val => val === true, { message: "You must agree to the terms and conditions" })
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
+const formSchema = z
+  .object({
+    username: z.string().min(3, { message: "Username must be at least 3 characters" }),
+    firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
+    lastName: z.string().min(2, { message: "Last name must be at least 2 characters" }),
+    email: z.string().email({ message: "Please enter a valid email address" }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z.string().min(6, { message: "Please confirm your password" }),
+    agreeTerms: z.boolean().refine((val) => val === true, { message: "You must agree to the terms and conditions" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const { signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  
-  const form = useForm<z.infer<typeof formSchema>>({
+
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
@@ -52,20 +50,31 @@ export default function SignUp() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values) {
     setIsLoading(true);
     try {
-      const fullName = `${values.firstName} ${values.lastName}`;
-      const success = await signup(values.username, values.email, values.password, fullName);
-      if (success) {
-        toast.success(`Account created successfully! Welcome, ${values.firstName}`, {
-          position: "top-center",
-          duration: 3000,
-          icon: "✓"
-        });
+      const response = await fetch("http://localhost:8080/api/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: values.username,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+          password: values.password,
+          role: "CUSTOMER" // Explicitly setting the default role
+        }),
+        
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(`Account created successfully! Welcome, ${values.username}`);
         navigate("/login");
       } else {
-        toast.error("Failed to create account");
+        toast.error(data.message || "Failed to create account");
       }
     } catch (error) {
       toast.error("An error occurred during registration");
@@ -75,13 +84,15 @@ export default function SignUp() {
     }
   }
 
+
+
   return (
     <div className="min-h-screen w-full flex">
       {/* Left side - Auction Image */}
       <div className="hidden lg:block lg:w-2/3 relative">
-        <img 
-          src={auctionImage} 
-          alt="Auction scene" 
+        <img
+          src={auctionImage}
+          alt="Auction scene"
           className="w-full h-full object-cover"
           onError={(e) => {
             e.currentTarget.src = fallbackImage;
@@ -89,7 +100,7 @@ export default function SignUp() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent"></div>
       </div>
-      
+     
       {/* Right side - Sign Up Form */}
       <div className="w-full lg:w-1/3 bg-white flex flex-col items-center justify-center p-8 shadow-lg">
         <div className="w-full max-w-md">
@@ -106,7 +117,7 @@ export default function SignUp() {
               <div className="absolute -bottom-2 left-0 right-0 h-1 bg-[#AA8F66] mx-auto w-20 rounded-full"></div>
             </div>
           </div>
-          
+         
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-6">
@@ -116,9 +127,9 @@ export default function SignUp() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="Username" 
-                          {...field} 
+                        <Input
+                          placeholder="Username"
+                          {...field}
                           className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
                         />
                       </FormControl>
@@ -126,7 +137,7 @@ export default function SignUp() {
                     </FormItem>
                   )}
                 />
-                
+               
                 {/* Name Fields Container */}
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -135,9 +146,9 @@ export default function SignUp() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input 
-                            placeholder="First Name" 
-                            {...field} 
+                          <Input
+                            placeholder="First Name"
+                            {...field}
                             className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
                           />
                         </FormControl>
@@ -151,9 +162,9 @@ export default function SignUp() {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input 
-                            placeholder="Last Name" 
-                            {...field} 
+                          <Input
+                            placeholder="Last Name"
+                            {...field}
                             className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
                           />
                         </FormControl>
@@ -163,16 +174,17 @@ export default function SignUp() {
                   />
                 </div>
 
+
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="Email Address" 
+                        <Input
+                          placeholder="Email Address"
                           type="email"
-                          {...field} 
+                          {...field}
                           className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
                         />
                       </FormControl>
@@ -186,10 +198,10 @@ export default function SignUp() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="Password" 
-                          {...field} 
+                        <Input
+                          type="password"
+                          placeholder="Password"
+                          {...field}
                           className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
                         />
                       </FormControl>
@@ -203,10 +215,10 @@ export default function SignUp() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="Confirm Password" 
-                          {...field} 
+                        <Input
+                          type="password"
+                          placeholder="Confirm Password"
+                          {...field}
                           className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
                         />
                       </FormControl>
@@ -236,17 +248,17 @@ export default function SignUp() {
                   )}
                 />
               </div>
-              
-              <Button 
-                type="submit" 
-                disabled={isLoading} 
+             
+              <Button
+                type="submit"
+                disabled={isLoading}
                 className="w-full h-12 bg-[#AA8F66] hover:bg-[#AA8F66]/90 text-white font-medium mt-8 rounded-md"
               >
                 {isLoading ? "Creating Account..." : "Sign up"}
               </Button>
             </form>
           </Form>
-          
+         
           <div className="text-center mt-8">
             <p className="text-black text-sm">
               By registering you agree to the <Link to="/terms" className="text-[#AA8F66] font-semibold hover:text-[#AA8F66]/80 hover:underline">Terms and conditions</Link>

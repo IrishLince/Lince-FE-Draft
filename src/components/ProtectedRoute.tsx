@@ -1,24 +1,30 @@
-import { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/auth-context";
 
 interface ProtectedRouteProps {
-  children: ReactNode;
+  children: React.ReactNode;
+  requireAdmin?: boolean;
 }
 
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+  const { user } = useAuth();
   const location = useLocation();
 
-  if (loading) {
-    // You could show a loading spinner here
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
-  if (!user) {
-    // Redirect to login page with a return url
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  // If this is an admin route and user is not admin, redirect to home
+  if (requireAdmin && user.role !== 'ADMIN') {
+    return <Navigate to="/" replace />;
+  }
+
+  // If user is admin and trying to access non-admin routes, redirect to admin dashboard
+  if (user.role === 'ADMIN' && !location.pathname.startsWith('/admin')) {
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   return <>{children}</>;
-} 
+};
+
+export default ProtectedRoute; 

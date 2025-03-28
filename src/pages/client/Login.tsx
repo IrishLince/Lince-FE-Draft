@@ -45,21 +45,24 @@ export default function Login() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
+      console.log("Attempting login with:", values.emailOrUsername);
+      
       const success = await login(values.emailOrUsername, values.password);
+      
       if (success) {
         toast.success("Welcome back! You've successfully logged in", {
           position: "top-center",
           duration: 3000,
           icon: "✓"
         });
-        // Navigate to the return URL
-        navigate(from, { replace: true });
+        // Navigate is handled by the auth context based on role
       } else {
-        toast.error("Invalid credentials");
+        console.error("Login failed - credentials didn't match any user");
+        toast.error("Invalid credentials. Please check your username and password.");
       }
     } catch (error) {
-      toast.error("An error occurred during login");
-      console.error(error);
+      console.error("Login error:", error);
+      toast.error("An error occurred during login. Please try again later.");
     } finally {
       setIsLoading(false);
     }
