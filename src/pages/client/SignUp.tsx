@@ -23,7 +23,8 @@ const fallbackImage = "https://images.unsplash.com/photo-1605433276792-2e53778f2
 
 const formSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
+  lastName: z.string().min(2, { message: "Last name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string().min(6, { message: "Please confirm your password" }),
@@ -42,7 +43,8 @@ export default function SignUp() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -53,9 +55,10 @@ export default function SignUp() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const success = await signup(values.username, values.email, values.password, values.name);
+      const fullName = `${values.firstName} ${values.lastName}`;
+      const success = await signup(values.username, values.email, values.password, fullName);
       if (success) {
-        toast.success(`Account created successfully! Welcome, ${values.name || values.username}`, {
+        toast.success(`Account created successfully! Welcome, ${values.firstName}`, {
           position: "top-center",
           duration: 3000,
           icon: "✓"
@@ -123,22 +126,43 @@ export default function SignUp() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input 
-                          placeholder="Full Name" 
-                          {...field} 
-                          className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-red-500" />
-                    </FormItem>
-                  )}
-                />
+                
+                {/* Name Fields Container */}
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input 
+                            placeholder="First Name" 
+                            {...field} 
+                            className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-500" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input 
+                            placeholder="Last Name" 
+                            {...field} 
+                            className="bg-gray-50 border border-gray-200 text-black placeholder:text-gray-500 h-12 rounded-md focus:ring-2 focus:ring-[#AA8F66]"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-500" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
                   name="email"

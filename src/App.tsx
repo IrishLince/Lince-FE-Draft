@@ -26,7 +26,10 @@ import ResetPassword from "./pages/client/ResetPassword";
 import SellerApplication from "./pages/client/SellerApplication";
 import SellerDashboard from "./pages/seller/Dashboard";
 import AdminProfile from "./pages/admin/Profile";
-import FAQSs from "./pages/client/FAQsPage";
+import CreateAuction from "./pages/seller/CreateAuction";
+import EditAuction from "./pages/seller/EditAuction";
+import SellerTransaction from "./components/TransactionPayment";
+import TransactionPayment from "./components/SellerTransaction";
 
 // Create a client with default options for React Query
 const queryClient = new QueryClient({
@@ -104,7 +107,6 @@ const AppRoutes = () => {
       <Route path="/artists" element={<ArtistsPage />} />
       <Route path="/artist/:id" element={<ArtistDetailPage />} />
       <Route path="/about" element={<AboutPage />} />
-      <Route path="/faqs" element={<FAQSs />} />
       
       {/* Protected Routes */}
       <Route path="/profile" element={
@@ -124,6 +126,27 @@ const AppRoutes = () => {
           <SellerDashboard />
         </ProtectedRoute>
       } />
+      <Route path="/seller/create-auction" element={
+        <ProtectedRoute>
+          <CreateAuction />
+        </ProtectedRoute>
+      } />
+      <Route path="/seller/edit-auction/:auctionId" element={
+        <ProtectedRoute>
+          <EditAuction />
+        </ProtectedRoute>
+      } />
+      <Route path="/seller/transactions" element={
+        <ProtectedRoute>
+          <SellerTransaction />
+        </ProtectedRoute>
+      } />
+      <Route path="/seller/transactions/payment/:transactionId" element={
+        <ProtectedRoute>
+          <TransactionPayment />
+        </ProtectedRoute>
+      } />
+
       
       {/* Not Found */}
       <Route path="*" element={<NotFound />} />
