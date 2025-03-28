@@ -40,7 +40,7 @@ const Navbar = () => {
   // Handle keyboard shortcut for search
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey) && (isSeller() || user?.role === 'ADMIN')) {
         e.preventDefault();
         setIsSearchOpen((open) => !open);
       }
@@ -48,7 +48,7 @@ const Navbar = () => {
 
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
-  }, []);
+  }, [isSeller, user]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,7 +147,7 @@ const Navbar = () => {
 
         {/* Search and Profile */}
         <div className="flex items-center gap-4">
-          {user && !isSeller() ? (
+          {user && !isSeller() && (
             <Button 
               variant="outline" 
               className="border-[#AA8F66] text-[#AA8F66] hover:bg-[#AA8F66]/10"
@@ -155,13 +155,6 @@ const Navbar = () => {
             >
               <Link to="/seller-application">Become a Seller</Link>
             </Button>
-          ) : !user && (
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="p-2 rounded-lg hover:bg-[#AA8F66]/10 transition-colors"
-            >
-              <Search size={20} className="text-[#5A3A31]" />
-            </button>
           )}
 
           {user ? (
