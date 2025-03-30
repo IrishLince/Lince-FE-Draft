@@ -50,11 +50,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // Function to route users based on their role
   const routeUserBasedOnRole = (role: string, currentPath: string) => {
+    // Public routes that should be accessible to all users regardless of role
+    const publicRoutes = ['/', '/auctions', '/artists', '/about', '/faqs', '/artwork', '/artist'];
+    
+    // Check if the current path is a public route
+    const isPublicRoute = publicRoutes.some(route => 
+      currentPath === route || currentPath.startsWith(route + '/')
+    );
+    
     if (role === 'ADMIN' && !currentPath.startsWith('/admin')) {
       navigate('/admin/dashboard', { replace: true });
     } else if (role === 'SELLER' && 
               !currentPath.startsWith('/seller') && 
-              !currentPath.startsWith('/admin')) {
+              !currentPath.startsWith('/admin') &&
+              !isPublicRoute) {
       navigate('/seller/dashboard', { replace: true });
     } else if (role === 'CUSTOMER' && 
               (currentPath === '/login' || currentPath === '/signup')) {
@@ -117,7 +126,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (role === 'ADMIN') {
           navigate('/admin/dashboard', { replace: true });
         } else if (role === 'SELLER') {
-          navigate('/seller/dashboard', { replace: true });
+          // Check if user was trying to access a specific page before login
+          const from = location.state?.from?.pathname || '/seller/dashboard';
+          
+          // If it's a valid path and not login/signup page, go there
+          if (from && from !== '/login' && from !== '/signup') {
+            navigate(from, { replace: true });
+          } else {
+            navigate('/seller/dashboard', { replace: true });
+          }
         } else {
           // For CUSTOMER role, redirect to homepage
           navigate('/', { replace: true });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronRight, Search, User } from 'lucide-react';
+import { Menu, X, ChevronRight, Search, User, LogOut, Settings, UserCircle } from 'lucide-react';
 import { Input } from './ui/input';
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { toast } from './ui/use-toast';
@@ -11,6 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -160,24 +161,48 @@ const Navbar = () => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="rounded-full" size="icon">
-                  <Avatar>
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                <Button 
+                  variant="ghost" 
+                  className="rounded-full p-0 h-9 w-9 overflow-hidden border-2 border-[#AA8F66]/20 hover:border-[#AA8F66]/40 transition-colors"
+                  size="icon"
+                >
+                  <Avatar className="h-full w-full">
+                    <AvatarFallback className="bg-[#AA8F66]/10 text-[#5A3A31] font-medium">
+                      {getInitials(user.name)}
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem className="font-medium">{user.name}</DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/profile">Profile</Link>
+              <DropdownMenuContent align="end" className="w-64 p-2 border border-[#AA8F66]/20 shadow-lg rounded-xl">
+                <div className="px-3 py-2 border-b border-[#AA8F66]/10 mb-1">
+                  <p className="font-medium text-[#5A3A31]">{user.name}</p>
+                  <p className="text-xs text-[#5A3A31]/70 mt-0.5">{user.email}</p>
+                </div>
+                
+                <DropdownMenuItem asChild className="rounded-lg flex items-center gap-2 h-9 px-3 py-2 text-sm text-[#5A3A31]/90 hover:text-[#5A3A31] hover:bg-[#AA8F66]/10 cursor-pointer">
+                  <Link to={user?.role === 'ADMIN' ? "/admin/profile" : "/profile"}>
+                    <UserCircle className="h-4 w-4 text-[#AA8F66]" />
+                    <span>Profile</span>
+                  </Link>
                 </DropdownMenuItem>
-                {!isSeller() && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/seller-application">Become a Seller</Link>
+                
+                {user?.role !== 'SELLER' && (
+                  <DropdownMenuItem asChild className="rounded-lg flex items-center gap-2 h-9 px-3 py-2 text-sm text-[#5A3A31]/90 hover:text-[#5A3A31] hover:bg-[#AA8F66]/10 cursor-pointer">
+                    <Link to="/profile/settings">
+                      <Settings className="h-4 w-4 text-[#AA8F66]" />
+                      <span>Settings</span>
+                    </Link>
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
+                
+                <DropdownMenuSeparator className="my-1 bg-[#AA8F66]/10" />
+                
+                <DropdownMenuItem 
+                  onClick={handleLogout}
+                  className="rounded-lg flex items-center gap-2 h-9 px-3 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -251,39 +276,13 @@ const Navbar = () => {
                     FAQs
                   </Link>
                 </li>
-                {user && isSeller() && (
-                  <li>
-                    <Link 
-                      to="/seller/dashboard" 
-                      className="block p-2 hover:bg-[#AA8F66]/10 rounded-lg"
-                    >
-                      Dashboard
-                    </Link>
-                  </li>
-                )}
               </ul>
             </nav>
           </div>
         </div>
       )}
 
-      {/* Search Dialog */}
-      <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-        <CommandInput 
-          placeholder="Search artworks and artists..." 
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-        />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Quick Links">
-            <CommandItem onSelect={() => performSearch(searchQuery)}>
-              <Search className="mr-2 h-4 w-4" />
-              Search for "{searchQuery}"
-            </CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
+      
     </header>
   );
 };

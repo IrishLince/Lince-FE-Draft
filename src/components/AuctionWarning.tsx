@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-const AuctionWarning: React.FC<{ auctionId: string }> = ({ auctionId }) => {
+interface AuctionWarningProps {
+  auctionId: string;
+  onFinish?: () => void; // Optional callback for dialog usage
+}
+
+const AuctionWarning: React.FC<AuctionWarningProps> = ({ auctionId, onFinish }) => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState<number>(24 * 60 * 60 * 1000); // 24 hours in milliseconds
 
@@ -27,6 +32,16 @@ const AuctionWarning: React.FC<{ auctionId: string }> = ({ auctionId }) => {
   const handleEditAuction = () => {
     if (timeLeft > 0) {
       navigate(`/seller/edit-auction/${auctionId}`); // Navigate to the edit auction page with the auction ID
+    }
+  };
+
+  const handleDashboardClick = () => {
+    if (onFinish) {
+      // If used in a dialog, call the onFinish callback
+      onFinish();
+    } else {
+      // If used as a standalone page, navigate to dashboard
+      navigate("/seller/dashboard");
     }
   };
 
@@ -57,7 +72,7 @@ const AuctionWarning: React.FC<{ auctionId: string }> = ({ auctionId }) => {
           variant="outline"
           size="lg"
           className="w-56 h-14 text-lg"
-          onClick={() => navigate("/seller/dashboard")}
+          onClick={handleDashboardClick}
         >
           Go to Dashboard
         </Button>

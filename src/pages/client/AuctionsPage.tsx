@@ -8,6 +8,7 @@ import { Search, Filter, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import CreateAuctionDialog from "@/components/CreateAuctionDialog";
 
 const AuctionsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -96,12 +97,7 @@ const AuctionsPage = () => {
           </p>
           {user && (user.role === "SELLER" || user.role === "ADMIN") && (
             <div className="mt-6">
-              <Button asChild className="bg-[#AA8F66] hover:bg-[#AA8F66]/90 text-white">
-                <Link to="/seller/create-auction" className="inline-flex items-center gap-2">
-                  <Plus size={20} />
-                  Create New Auction
-                </Link>
-              </Button>
+              <CreateAuctionDialog className="inline-flex items-center gap-2" />
             </div>
           )}
         </div>

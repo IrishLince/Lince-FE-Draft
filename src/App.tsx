@@ -104,6 +104,7 @@ const AppRoutes = () => {
         <Route path="/artists" element={<ArtistsPage />} />
         <Route path="/artist/:id" element={<ArtistDetailPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/faqs" element={<FAQsPage />} />
 
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />

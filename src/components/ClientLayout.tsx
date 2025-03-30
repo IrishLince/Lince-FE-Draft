@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import AuthNavBar from "./AuthNavBar";
+import Navbar from "./Navbar";
 
 interface ClientLayoutProps {
   children: ReactNode;
@@ -8,7 +8,7 @@ interface ClientLayoutProps {
 export default function ClientLayout({ children }: ClientLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
-      <AuthNavBar />
+      <Navbar />
       <main className="flex-1">
         {children}
       </main>
