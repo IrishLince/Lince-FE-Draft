@@ -122,23 +122,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
         
-        // Redirect based on role
-        if (role === 'ADMIN') {
-          navigate('/admin/dashboard', { replace: true });
-        } else if (role === 'SELLER') {
-          // Check if user was trying to access a specific page before login
-          const from = location.state?.from?.pathname || '/seller/dashboard';
-          
-          // If it's a valid path and not login/signup page, go there
-          if (from && from !== '/login' && from !== '/signup') {
-            navigate(from, { replace: true });
-          } else {
-            navigate('/seller/dashboard', { replace: true });
-          }
-        } else {
-          // For CUSTOMER role, redirect to homepage
-          navigate('/', { replace: true });
-        }
+        // Always redirect to home page first, regardless of role
+        navigate('/', { replace: true });
         
         return true;
       } else {
@@ -206,7 +191,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   };
 
   return (

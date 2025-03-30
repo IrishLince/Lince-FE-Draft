@@ -51,7 +51,6 @@ export default function Login() {
       
       if (success) {
         toast.success("Welcome back! You've successfully logged in", {
-          position: "top-center",
           duration: 3000,
           icon: "✓"
         });

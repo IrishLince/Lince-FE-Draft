@@ -165,15 +165,15 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
           <ul className="space-y-1.5">
             <li>
               <Link
-                to={user?.role === 'ADMIN' ? "/admin/profile" : "/profile"}
+                to={user?.role === 'ADMIN' ? "/admin/profile" : (user?.role === 'SELLER' ? "/seller/profile" : "/profile")}
                 className={cn(
                   "flex items-center p-3 text-base font-normal rounded-lg transition-all duration-200",
-                  isActive(user?.role === 'ADMIN' ? "/admin/profile" : "/profile")
+                  isActive(user?.role === 'ADMIN' ? "/admin/profile" : (user?.role === 'SELLER' ? "/seller/profile" : "/profile"))
                     ? "bg-gradient-to-r from-[#5A3A31] to-[#AA8F66] text-white shadow-md"
                     : "hover:bg-[#AA8F66]/10 text-[#5A3A31]"
                 )}
               >
-                <User size={20} className={isActive(user?.role === 'ADMIN' ? "/admin/profile" : "/profile") ? "text-white" : "text-[#AA8F66]"} />
+                <User size={20} className={isActive(user?.role === 'ADMIN' ? "/admin/profile" : (user?.role === 'SELLER' ? "/seller/profile" : "/profile")) ? "text-white" : "text-[#AA8F66]"} />
                 {!collapsed && <span className="ml-3 font-medium">Profile</span>}
               </Link>
             </li>

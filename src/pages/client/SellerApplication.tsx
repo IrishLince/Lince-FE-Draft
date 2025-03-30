@@ -178,10 +178,11 @@ export default function SellerApplication() {
 
   return (
     <ClientLayout>
-      <div className="container max-w-4xl py-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold mb-2">Become a Seller</h1>
-          <p className="text-muted-foreground">
+      <div className="container max-w-4xl py-12">
+        <div className="mb-10 text-center">
+          <h1 className="text-4xl font-bold mb-4 text-[#5A3A31]">Become a Seller</h1>
+          <div className="w-20 h-1 bg-[#AA8F66] mx-auto mb-6"></div>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Complete this form to apply as a seller on our platform.
           </p>
         </div>

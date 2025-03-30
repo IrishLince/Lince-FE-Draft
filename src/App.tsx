@@ -25,11 +25,13 @@ import ForgotPassword from "./pages/client/ForgotPassword";
 import ResetPassword from "./pages/client/ResetPassword";
 import SellerApplication from "./pages/client/SellerApplication";
 import SellerDashboard from "./pages/seller/Dashboard";
+import SellerProfile from "./pages/seller/Profile";
 import AdminProfile from "./pages/admin/Profile";
 import CreateAuction from "./pages/seller/CreateAuction";
-import EditAuction from "./pages/seller/EditAuction";
 import SellerTransaction from "./components/SellerTransaction";
 import FAQsPage from "./pages/client/FAQsPage";
+import MyAuctions from "./pages/seller/MyAuctions";
+import ListOfBidsPage from "./pages/client/ListOfBidsPage";
 
 // Create a client with default options for React Query
 const queryClient = new QueryClient({
@@ -125,29 +127,37 @@ const AppRoutes = () => {
             <SellerDashboard />
           </ProtectedRoute>
         } />
-        <Route path="/seller/market-insights" element={
-          <ProtectedRoute>
-            <SellerDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/seller/my-items" element={
-          <ProtectedRoute>
-            <SellerDashboard />
-          </ProtectedRoute>
-        } />
         <Route path="/seller/create-auction" element={
           <ProtectedRoute>
             <CreateAuction />
           </ProtectedRoute>
         } />
-        <Route path="/seller/edit-auction/:auctionId" element={
-          <ProtectedRoute>
-            <EditAuction />
-          </ProtectedRoute>
-        } />
         <Route path="/seller/transactions" element={
           <ProtectedRoute>
             <SellerTransaction />
+          </ProtectedRoute>
+        } />
+        <Route path="/seller/my-auctions" element={
+          <ProtectedRoute>
+            <MyAuctions />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/seller/profile" element={
+          <ProtectedRoute>
+            <SellerProfile />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/seller/profile/payment" element={
+          <ProtectedRoute>
+            <SellerProfile />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/seller/profile/security" element={
+          <ProtectedRoute>
+            <SellerProfile />
           </ProtectedRoute>
         } />
 
@@ -179,6 +189,11 @@ const AppRoutes = () => {
           <Profile />
         </ProtectedRoute>
       } />
+      <Route path="/bids" element={
+        <ProtectedRoute>
+          <ListOfBidsPage />
+        </ProtectedRoute>
+      } />
       <Route path="/seller-application" element={
         <ProtectedRoute>
           <SellerApplication />
@@ -196,8 +211,7 @@ const App = () => (
     <BrowserRouter>
       <AuthProvider>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
+          <Sonner position="bottom-right" />
           <AppRoutes />
         </TooltipProvider>
       </AuthProvider>

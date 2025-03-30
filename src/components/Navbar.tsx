@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronRight, Search, User, LogOut, Settings, UserCircle } from 'lucide-react';
+import { Menu, X, ChevronRight, Search, User, LogOut, UserCircle, ClipboardList } from 'lucide-react';
 import { Input } from './ui/input';
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
 import { toast } from './ui/use-toast';
@@ -94,11 +94,12 @@ const Navbar = () => {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/80 backdrop-blur-md shadow-subtle py-3' 
-          : 'bg-transparent py-6'
+          ? 'bg-white/80 backdrop-blur-md shadow-subtle py-2' 
+          : 'bg-transparent py-4'
       }`}
+      style={{ height: '70px' }}
     >
-      <div className="container mx-auto px-4 flex items-center justify-between">
+      <div className="container mx-auto px-4 flex items-center justify-between h-full">
         {/* Logo */}
         <Link to="/" className="font-serif text-2xl font-bold tracking-tight mr-4">
           Art<span className="text-[#AA8F66]">Auction</span>
@@ -180,17 +181,17 @@ const Navbar = () => {
                 </div>
                 
                 <DropdownMenuItem asChild className="rounded-lg flex items-center gap-2 h-9 px-3 py-2 text-sm text-[#5A3A31]/90 hover:text-[#5A3A31] hover:bg-[#AA8F66]/10 cursor-pointer">
-                  <Link to={user?.role === 'ADMIN' ? "/admin/profile" : "/profile"}>
+                  <Link to={user?.role === 'ADMIN' ? "/admin/profile" : (user?.role === 'SELLER' ? "/seller/profile" : "/profile")}>
                     <UserCircle className="h-4 w-4 text-[#AA8F66]" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
                 
-                {user?.role !== 'SELLER' && (
+                {user?.role === 'CUSTOMER' && (
                   <DropdownMenuItem asChild className="rounded-lg flex items-center gap-2 h-9 px-3 py-2 text-sm text-[#5A3A31]/90 hover:text-[#5A3A31] hover:bg-[#AA8F66]/10 cursor-pointer">
-                    <Link to="/profile/settings">
-                      <Settings className="h-4 w-4 text-[#AA8F66]" />
-                      <span>Settings</span>
+                    <Link to="/bids">
+                      <ClipboardList className="h-4 w-4 text-[#AA8F66]" />
+                      <span>My Bids</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -216,6 +217,14 @@ const Navbar = () => {
               </Button>
             </div>
           )}
+          
+          {/* Mobile menu button */}
+          <button 
+            className="md:hidden p-2"
+            onClick={() => setIsMobileMenuOpen(true)}
+          >
+            <Menu size={24} className="text-[#5A3A31]" />
+          </button>
         </div>
       </div>
       
@@ -276,13 +285,111 @@ const Navbar = () => {
                     FAQs
                   </Link>
                 </li>
+                {user && isSeller() && (
+                  <li>
+                    <Link 
+                      to="/seller/dashboard" 
+                      className="block p-2 hover:bg-[#AA8F66]/10 rounded-lg"
+                    >
+                      Dashboard
+                    </Link>
+                  </li>
+                )}
+                {user && !isSeller() && (
+                  <li>
+                    <Link 
+                      to="/seller-application" 
+                      className="block p-2 hover:bg-[#AA8F66]/10 rounded-lg text-[#AA8F66] font-medium"
+                    >
+                      Become a Seller
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
+            {user ? (
+              <div className="p-4 border-t">
+                <div className="flex items-center p-2">
+                  <Avatar className="h-10 w-10 mr-3">
+                    <AvatarFallback className="bg-[#AA8F66]/10 text-[#5A3A31] font-medium">
+                      {getInitials(user.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{user.name}</p>
+                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2">
+                  <Button asChild variant="outline" className="w-full justify-start" size="sm">
+                    <Link to={user?.role === 'ADMIN' ? "/admin/profile" : (user?.role === 'SELLER' ? "/seller/profile" : "/profile")}>
+                      <UserCircle className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </Button>
+                  {user?.role === 'CUSTOMER' && (
+                    <Button asChild variant="outline" className="w-full justify-start" size="sm">
+                      <Link to="/bids">
+                        <ClipboardList className="mr-2 h-4 w-4" />
+                        My Bids
+                      </Link>
+                    </Button>
+                  )}
+                  <Button 
+                    variant="destructive" 
+                    className="w-full justify-start" 
+                    size="sm"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 border-t flex gap-2">
+                <Button variant="outline" className="flex-1" asChild>
+                  <Link to="/login">Log in</Link>
+                </Button>
+                <Button className="flex-1 bg-[#AA8F66] hover:bg-[#AA8F66]/90" asChild>
+                  <Link to="/signup">Sign up</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
-
       
+      {/* Global search dialog for sellers */}
+      <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <div className="p-2">
+          <CommandInput placeholder="Search for artworks, auctions, artists..." className="border-none focus:ring-0" />
+        </div>
+        <CommandList>
+          <CommandEmpty>
+            <div className="flex flex-col items-center justify-center py-10">
+              <Search className="h-10 w-10 text-muted-foreground mb-2" />
+              <p className="text-center text-muted-foreground">No results found.</p>
+            </div>
+          </CommandEmpty>
+          <CommandGroup heading="Quick links">
+            <CommandItem onSelect={() => {
+              performSearch("recent");
+            }}>
+              <Search className="mr-2 h-4 w-4" />
+              <span>Recent auctions</span>
+              <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
+            </CommandItem>
+            <CommandItem onSelect={() => {
+              performSearch("popular");
+            }}>
+              <Search className="mr-2 h-4 w-4" />
+              <span>Popular artworks</span>
+              <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
     </header>
   );
 };

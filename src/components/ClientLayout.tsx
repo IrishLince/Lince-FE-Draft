@@ -9,7 +9,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 pt-[70px]">
         {children}
       </main>
       <footer className="py-6 px-4 border-t">

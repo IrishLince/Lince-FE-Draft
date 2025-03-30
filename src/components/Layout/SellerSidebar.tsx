@@ -8,6 +8,7 @@ import {
   CreditCard,
   ChevronLeft,
   ChevronRight,
+  User,
 } from 'lucide-react';
 
 interface SellerSidebarProps {
@@ -42,6 +43,11 @@ const SellerSidebar = ({ collapsed, setCollapsed }: SellerSidebarProps) => {
       title: 'Transaction Payment',
       icon: CreditCard,
       href: '/seller/transactions'
+    },
+    {
+      title: 'Profile',
+      icon: User,
+      href: '/seller/profile'
     }
   ];
 

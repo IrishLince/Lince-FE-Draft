@@ -146,7 +146,7 @@ const Header = ({ sidebarCollapsed }: HeaderProps) => {
                 <p className="text-xs text-[#5A3A31]/70 mt-0.5">{user?.email || 'admin@example.com'}</p>
               </div>
               <DropdownMenuItem asChild className="text-[#5A3A31]/90 hover:text-[#5A3A31] hover:bg-[#AA8F66]/10 mt-1 rounded-lg">
-                <Link to={user?.role === 'ADMIN' ? "/admin/profile" : "/profile"} className="cursor-pointer">
+                <Link to={user?.role === 'ADMIN' ? "/admin/profile" : (user?.role === 'SELLER' ? "/seller/profile" : "/profile")} className="cursor-pointer">
                   <div className="flex items-center py-0.5">
                     <div className="h-7 w-7 rounded-full bg-[#AA8F66]/10 flex items-center justify-center mr-2">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#AA8F66]">
@@ -154,7 +154,7 @@ const Header = ({ sidebarCollapsed }: HeaderProps) => {
                         <path d="M4 21V19C4 17.9391 4.42143 16.9217 5.17157 16.1716C5.92172 15.4214 6.93913 15 8 15H16C17.0609 15 18.0783 15.4214 18.8284 16.1716C19.5786 16.9217 20 17.9391 20 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </div>
-                    <span className="text-sm">Profile</span>
+                    <span className="text-sm">Profile Settings</span>
                   </div>
                 </Link>
               </DropdownMenuItem>
