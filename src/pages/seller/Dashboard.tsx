@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PackageOpen, TrendingUp, Users, Gavel, History, ArrowRight, BarChart2, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
-import MyBids from "./Dashboard/MyBids";
+import { MyBids } from "./Dashboard/MyBids";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -101,22 +101,7 @@ export default function Dashboard() {
         </Card>
         
         {/* My Bids Section */}
-        <Card className="border border-[#AA8F66]/10 shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-[#AA8F66]/10 bg-[#FDFBF8]">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-[#5A3A31] text-lg">My Bids</CardTitle>
-                <CardDescription className="text-[#5A3A31]/60 mt-1">
-                  Track your auction bids and payments
-                </CardDescription>
-              </div>
-              <History className="h-5 w-5 text-[#AA8F66]" />
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <MyBids />
-          </CardContent>
-        </Card>
+        <MyBids />
       </div>
     </SellerLayout>
   );
