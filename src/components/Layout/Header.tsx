@@ -1,4 +1,4 @@
-import { Sun, Moon, Bell, Search } from 'lucide-react';
+import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -15,21 +15,11 @@ interface HeaderProps {
 }
 
 const Header = ({ sidebarCollapsed }: HeaderProps) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const { user, logout } = useAuth();
-  const [showNotifications, setShowNotifications] = useState(false);
   
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
-
   const handleLogout = () => {
     logout();
   };
-  
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, [theme]);
   
   return (
     <header className={`h-16 fixed top-0 right-0 z-30 bg-gradient-to-r from-white via-white to-[#F9F6F3] backdrop-filter backdrop-blur-md border-b border-[#AA8F66]/20 shadow-sm transition-all duration-300 ${sidebarCollapsed ? 'left-20' : 'left-64'}`}>
@@ -45,83 +35,9 @@ const Header = ({ sidebarCollapsed }: HeaderProps) => {
               <div className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#AA8F66]/0 via-[#AA8F66]/50 to-[#AA8F66]/0"></div>
             </span>
           </div>
-          
-          {/* Quick Search - Optional */}
-          <div className="hidden md:flex items-center ml-6 relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search size={14} className="text-[#5A3A31]/40" />
-            </div>
-            <input 
-              type="text"
-              placeholder="Quick search..." 
-              className="bg-[#F9F7F5]/50 border border-[#AA8F66]/10 rounded-full text-sm pl-9 pr-3 py-1.5 w-44 focus:w-64 transition-all duration-300 text-[#5A3A31] focus:outline-none focus:ring-1 focus:ring-[#AA8F66]/30"
-            />
-          </div>
         </div>
         
-        <div className="flex items-center space-x-4">
-          {/* Notifications */}
-          <div className="relative">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="text-[#5A3A31]/70 hover:text-[#5A3A31] hover:bg-[#AA8F66]/10 rounded-full h-9 w-9 relative"
-            >
-              <Bell size={18} />
-              <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#AA8F66] rounded-full"></span>
-            </Button>
-            
-            {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-[#AA8F66]/20 p-3 z-50">
-                <h3 className="text-sm font-medium text-[#5A3A31] mb-2">Notifications</h3>
-                <div className="space-y-2">
-                  <div className="p-2 hover:bg-[#F9F7F5] rounded-lg transition-colors">
-                    <div className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-[#AA8F66]/10 flex items-center justify-center text-[#AA8F66] mr-2">
-                        <Bell size={14} />
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-[#5A3A31]">New auction submission</p>
-                        <p className="text-xs text-[#5A3A31]/60">Vintage Watch submitted by John Doe</p>
-                        <p className="text-xs text-[#5A3A31]/50 mt-1">2 minutes ago</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-2 hover:bg-[#F9F7F5] rounded-lg transition-colors">
-                    <div className="flex items-start">
-                      <div className="h-8 w-8 rounded-full bg-[#5A3A31]/10 flex items-center justify-center text-[#5A3A31] mr-2">
-                        <Bell size={14} />
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-[#5A3A31]">New seller application</p>
-                        <p className="text-xs text-[#5A3A31]/60">Sarah Johnson applied to be a seller</p>
-                        <p className="text-xs text-[#5A3A31]/50 mt-1">1 hour ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-2 pt-2 border-t border-[#AA8F66]/10 text-center">
-                  <button className="text-xs text-[#AA8F66] hover:text-[#5A3A31] transition-colors">
-                    View all notifications
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Theme Toggle */}
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={toggleTheme} 
-            className="text-[#5A3A31]/70 hover:text-[#5A3A31] hover:bg-[#AA8F66]/10 rounded-full h-9 w-9"
-          >
-            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-          </Button>
-          
-          <div className="h-8 w-px bg-[#AA8F66]/20 mx-1"></div>
-          
+        <div className="flex items-center space-x-4">  
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

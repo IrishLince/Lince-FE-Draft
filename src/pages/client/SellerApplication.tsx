@@ -42,7 +42,6 @@ export default function SellerApplication() {
     lastName: "",
     username: "",
     email: user?.email || "",
-    phone: "",
     category: "",
     background: "",
     agreesToTerms: false,
@@ -50,7 +49,6 @@ export default function SellerApplication() {
 
   const [firstNameValid, setFirstNameValid] = useState(true);
   const [lastNameValid, setLastNameValid] = useState(true);
-  const [phoneValid, setPhoneValid] = useState(true);
   const [emailValid, setEmailValid] = useState(true);
   const [backgroundValid, setBackgroundValid] = useState(true);
   const [categoryValid, setCategoryValid] = useState(true);
@@ -75,11 +73,6 @@ export default function SellerApplication() {
     }
     if (name === "lastName") {
       setLastNameValid(validateName(value));
-    }
-
-    if (name === "phone") {
-      if (!/^\d*$/.test(value)) return;
-      if (value.length > 11) return;
     }
 
     if (name === "background") {
@@ -110,15 +103,6 @@ export default function SellerApplication() {
     } else {
       if (name === "firstName") setFirstNameValid(true);
       if (name === "lastName") setLastNameValid(true);
-    }
-  };
-
-  const handlePhoneBlur = () => {
-    if (!/^09\d{9}$/.test(formData.phone)) {
-      setPhoneValid(false);
-      toast.error("Phone number must be exactly 11 digits and start with 09");
-    } else {
-      setPhoneValid(true);
     }
   };
 
@@ -214,19 +198,6 @@ export default function SellerApplication() {
                   <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required />
                   {!emailValid && <p className="text-red-500 text-sm">Please input registered email.</p>}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    onBlur={handlePhoneBlur}
-                    required
-                    className={!phoneValid ? "border-red-500" : ""}
-                  />
-                  {!phoneValid && <p className="text-red-500 text-sm">Invalid phone number.</p>}
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -298,14 +269,12 @@ export default function SellerApplication() {
                 !formData.lastName || 
                 !formData.username || 
                 !formData.email || 
-                !formData.phone || 
                 !formData.category || 
                 !formData.background || 
                 !formData.agreesToTerms ||
                 !firstNameValid || 
                 !lastNameValid || 
                 !emailValid || 
-                !phoneValid || 
                 !backgroundValid || 
                 !categoryValid
               }

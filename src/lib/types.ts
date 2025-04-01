@@ -1,6 +1,8 @@
 export interface User {
   id: string;
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   role: 'admin' | 'seller' | 'buyer';
   status: 'active' | 'inactive' | 'pending';
@@ -24,12 +26,12 @@ export interface Item {
 export interface SellerApplication {
   id: string;
   userId: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  username: string;
   email: string;
-  phone: string;
-  businessName?: string;
-  businessAddress?: string;
-  taxId?: string;
+  category: string;
+  background: string;
   status: 'pending' | 'approved' | 'rejected';
   submittedAt: Date;
   avatarUrl?: string;

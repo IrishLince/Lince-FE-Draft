@@ -32,6 +32,10 @@ import SellerTransaction from "./components/SellerTransaction";
 import FAQsPage from "./pages/client/FAQsPage";
 import MyAuctions from "./pages/seller/MyAuctions";
 import ListOfBidsPage from "./pages/client/ListOfBidsPage";
+import BiddingHistory from "./pages/client/BiddingHistory";
+import Security from "./pages/client/Security";
+import ItemStatus from "./pages/seller/ItemStatus";
+import AuctionStatus from "./pages/seller/AuctionStatus";
 
 // Create a client with default options for React Query
 const queryClient = new QueryClient({
@@ -137,12 +141,21 @@ const AppRoutes = () => {
             <SellerTransaction />
           </ProtectedRoute>
         } />
+        <Route path="/seller/item-status" element={
+          <ProtectedRoute>
+            <ItemStatus />
+          </ProtectedRoute>
+        } />
+        <Route path="/seller/auction-status" element={
+          <ProtectedRoute>
+            <AuctionStatus />
+          </ProtectedRoute>
+        } />
         <Route path="/seller/my-auctions" element={
           <ProtectedRoute>
             <MyAuctions />
           </ProtectedRoute>
         } />
-
         <Route path="/seller/profile" element={
           <ProtectedRoute>
             <SellerProfile />
@@ -187,6 +200,21 @@ const AppRoutes = () => {
       <Route path="/profile" element={
         <ProtectedRoute>
           <Profile />
+        </ProtectedRoute>
+      } />
+      <Route path="/client/profile" element={
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      } />
+      <Route path="/client/bidding-history" element={
+        <ProtectedRoute>
+          <BiddingHistory />
+        </ProtectedRoute>
+      } />
+      <Route path="/client/security" element={
+        <ProtectedRoute>
+          <Security />
         </ProtectedRoute>
       } />
       <Route path="/bids" element={

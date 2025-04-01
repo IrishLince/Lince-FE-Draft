@@ -125,6 +125,14 @@ const Navbar = () => {
           >
             Artists
           </Link>
+          {user && isSeller() && (
+            <Link 
+              to="/seller/profile" 
+              className={`nav-link ${location.pathname.startsWith('/seller') ? 'text-[#AA8F66] after:w-full' : ''}`}
+            >
+              Overview
+            </Link>
+          )}
           <Link 
             to="/about" 
             className={`nav-link ${location.pathname === '/about' ? 'text-[#AA8F66] after:w-full' : ''}`}
@@ -137,14 +145,7 @@ const Navbar = () => {
           >
             FAQs
           </Link>
-          {user && isSeller() && (
-            <Link 
-              to="/seller/dashboard" 
-              className={`nav-link ${location.pathname.startsWith('/seller') ? 'text-[#AA8F66] after:w-full' : ''}`}
-            >
-              Dashboard
-            </Link>
-          )}
+          
         </nav>
 
         {/* Search and Profile */}
@@ -291,7 +292,7 @@ const Navbar = () => {
                       to="/seller/dashboard" 
                       className="block p-2 hover:bg-[#AA8F66]/10 rounded-lg"
                     >
-                      Dashboard
+                      Overview
                     </Link>
                   </li>
                 )}

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import MainLayout from '@/components/Layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 interface DashboardCardProps {
   icon: LucideIcon;
@@ -134,17 +135,6 @@ const AdminDashboard = () => {
                 <h2 className="text-2xl font-bold">Welcome back, Admin</h2>
                 <p className="text-white/80 mt-1">Here's what's happening with your auction platform today.</p>
               </div>
-              
-              <div className="flex space-x-2 mt-4 md:mt-0">
-                <button className="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-4 py-2 text-sm font-medium backdrop-blur-sm">
-                  <BarChart3 size={16} className="inline-block mr-1 relative -top-px" />
-                  View Reports
-                </button>
-                <button className="bg-white hover:bg-white/90 transition-colors rounded-lg px-4 py-2 text-sm font-medium text-[#5A3A31]">
-                  <Activity size={16} className="inline-block mr-1 relative -top-px" />
-                  Analytics
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -154,9 +144,9 @@ const AdminDashboard = () => {
           <SectionHeader 
             title="Users Overview" 
             action={
-              <button className="text-sm text-[#AA8F66] hover:text-[#5A3A31] flex items-center transition-colors">
+              <Link to="/admin/users" className="text-sm text-[#AA8F66] hover:text-[#5A3A31] flex items-center transition-colors">
                 View All Users <ChevronRight size={14} className="ml-1" />
-              </button>
+              </Link>
             }
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -198,9 +188,9 @@ const AdminDashboard = () => {
           <SectionHeader 
             title="Items Management" 
             action={
-              <button className="text-sm text-[#AA8F66] hover:text-[#5A3A31] flex items-center transition-colors">
+              <Link to="/admin/items" className="text-sm text-[#AA8F66] hover:text-[#5A3A31] flex items-center transition-colors">
                 View All Items <ChevronRight size={14} className="ml-1" />
-              </button>
+              </Link>
             }
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -242,9 +232,9 @@ const AdminDashboard = () => {
           <SectionHeader 
             title="Seller Applications" 
             action={
-              <button className="text-sm text-[#AA8F66] hover:text-[#5A3A31] flex items-center transition-colors">
+              <Link to="/admin/seller-applications" className="text-sm text-[#AA8F66] hover:text-[#5A3A31] flex items-center transition-colors">
                 View Applications <ChevronRight size={14} className="ml-1" />
-              </button>
+              </Link>
             }
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -285,9 +275,9 @@ const AdminDashboard = () => {
           <SectionHeader 
             title="Auction Management" 
             action={
-              <button className="text-sm text-[#AA8F66] hover:text-[#5A3A31] flex items-center transition-colors">
+              <Link to="/admin/auction-approvals" className="text-sm text-[#AA8F66] hover:text-[#5A3A31] flex items-center transition-colors">
                 View Auctions <ChevronRight size={14} className="ml-1" />
-              </button>
+              </Link>
             }
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -321,68 +311,6 @@ const AdminDashboard = () => {
               colorClass="bg-blue-500"
               subValue="Revenue: $238,900"
             />
-          </div>
-        </div>
-        
-        {/* Recent Activity & Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="col-span-2">
-            <SectionHeader title="Recent Activity" />
-            <Card className="border-none shadow-md overflow-hidden">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  {[1, 2, 3, 4].map((item) => (
-                    <div key={item} className="flex items-start p-3 rounded-lg hover:bg-[#F9F7F5] transition-colors">
-                      <div className="h-9 w-9 rounded-full bg-[#AA8F66]/10 flex items-center justify-center mr-3">
-                        {item % 2 === 0 ? 
-                          <CheckCircle size={16} className="text-[#AA8F66]" /> : 
-                          <Clock size={16} className="text-[#5A3A31]" />
-                        }
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-[#5A3A31]">
-                          {item % 2 === 0 ? 'Auction item approved' : 'New seller application received'}
-                        </p>
-                        <p className="text-xs text-[#5A3A31]/70">
-                          {item % 2 === 0 ? 'Vintage Watch by John Doe' : 'Sarah Johnson applied to be a seller'}
-                        </p>
-                        <p className="text-xs text-[#5A3A31]/50 mt-1">
-                          {item % 2 === 0 ? '2 hours ago' : '4 hours ago'}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-4 pt-4 border-t border-[#AA8F66]/10 text-center">
-                  <button className="text-sm text-[#AA8F66] hover:text-[#5A3A31] transition-colors">
-                    View all activity
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div>
-            <SectionHeader title="Quick Actions" />
-            <Card className="border-none shadow-md overflow-hidden">
-              <CardContent className="pt-6">
-                <div className="space-y-3">
-                  <button className="w-full p-3 bg-[#5A3A31] text-white rounded-lg hover:bg-[#5A3A31]/90 transition-colors text-sm font-medium flex justify-between items-center">
-                    Review Pending Auctions
-                    <ChevronRight size={16} />
-                  </button>
-                  <button className="w-full p-3 bg-[#AA8F66] text-white rounded-lg hover:bg-[#AA8F66]/90 transition-colors text-sm font-medium flex justify-between items-center">
-                    Approve Seller Applications
-                    <ChevronRight size={16} />
-                  </button>
-                  <button className="w-full p-3 bg-white border border-[#AA8F66]/20 text-[#5A3A31] rounded-lg hover:bg-[#F9F7F5] transition-colors text-sm font-medium flex justify-between items-center">
-                    View Platform Analytics
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

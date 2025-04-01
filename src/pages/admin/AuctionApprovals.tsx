@@ -201,7 +201,7 @@ const AuctionApprovals = () => {
   return (
     <MainLayout>
       {/* Status Overview Cards */}
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-none shadow-md overflow-hidden relative group hover:shadow-lg transition-shadow">
           <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
           <div className="p-4">
@@ -262,27 +262,6 @@ const AuctionApprovals = () => {
               </div>
             </div>
             <div className="mt-2 text-xs text-[#5A3A31]/70">Items not meeting standards</div>
-          </div>
-        </Card>
-        
-        <Card className="border-none shadow-md overflow-hidden relative group hover:shadow-lg transition-shadow">
-          <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-          <div className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col">
-                <span className="text-xs text-[#5A3A31]/70 flex items-center">
-                  <ShoppingCart size={12} className="mr-1 text-blue-500" />
-                  Sold
-                </span>
-                <span className="text-2xl font-bold text-[#5A3A31]">
-                  {statusCounts["sold"] || 0}
-                </span>
-              </div>
-              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500">
-                <ShoppingCart size={20} />
-              </div>
-            </div>
-            <div className="mt-2 text-xs text-[#5A3A31]/70">Items sold at auction</div>
           </div>
         </Card>
       </div>

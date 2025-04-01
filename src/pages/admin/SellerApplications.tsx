@@ -1,15 +1,13 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   BadgeCheck,
   Clock,
   X,
   User,
-  Phone,
   Mail,
-  Building,
-  MapPin,
-  CreditCard,
+  Tag,
   FileText,
+  Briefcase,
 } from "lucide-react";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
@@ -36,6 +34,22 @@ const SellerApplications = () => {
   const [selectedApplication, setSelectedApplication] =
     useState<SellerApplication | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+
+  // Calculate application status counts
+  const statusCounts = useMemo(() => {
+    const counts = {
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      total: applicationsData.length,
+    };
+
+    applicationsData.forEach((app) => {
+      counts[app.status as keyof typeof counts] += 1;
+    });
+
+    return counts;
+  }, [applicationsData]);
 
   // Helper function to map application status to StatusBadge variant
   const getStatusVariant = (status: string) => {
@@ -71,7 +85,7 @@ const SellerApplications = () => {
       user.role = "seller";
     }
 
-    toast.success(`${application.name}'s application has been approved`);
+    toast.success(`${application.firstName} ${application.lastName}'s application has been approved`);
     setIsViewDialogOpen(false);
   };
 
@@ -82,8 +96,17 @@ const SellerApplications = () => {
       )
     );
 
-    toast.success(`${application.name}'s application has been rejected`);
+    toast.success(`${application.firstName} ${application.lastName}'s application has been rejected`);
     setIsViewDialogOpen(false);
+  };
+
+  // Format date to show in a nicer format
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   const columns = [
@@ -95,37 +118,39 @@ const SellerApplications = () => {
           {row.avatarUrl ? (
             <img
               src={row.avatarUrl}
-              alt={row.name}
+              alt={`${row.firstName} ${row.lastName}`}
               className="h-8 w-8 rounded-full mr-3"
             />
           ) : (
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
               <span className="text-primary font-medium">
-                {row.name.charAt(0)}
+                {row.firstName.charAt(0)}
               </span>
             </div>
           )}
           <div>
-            <div className="font-medium">{row.name}</div>
-            <div className="text-sm text-muted-foreground">{row.email}</div>
+            <div className="font-medium">{row.firstName} {row.lastName}</div>
+            <div className="text-sm text-muted-foreground">@{row.username}</div>
           </div>
         </div>
       ),
       sortable: true,
     },
     {
-      id: "businessName",
-      header: "Business Name",
+      id: "email",
+      header: "Email",
       cell: (row: SellerApplication) => (
-        <div className="text-sm">{row.businessName || "N/A"}</div>
+        <div className="text-sm">{row.email}</div>
       ),
       sortable: true,
     },
     {
-      id: "phone",
-      header: "Phone",
+      id: "category",
+      header: "Category",
       cell: (row: SellerApplication) => (
-        <div className="text-sm">{row.phone}</div>
+        <div className="text-sm font-medium py-1 px-2 bg-secondary/50 rounded-md inline-block">
+          {row.category}
+        </div>
       ),
       sortable: true,
     },
@@ -134,7 +159,7 @@ const SellerApplications = () => {
       header: "Submitted",
       cell: (row: SellerApplication) => (
         <div className="text-sm">
-          {new Date(row.submittedAt).toLocaleDateString()}
+          {formatDate(row.submittedAt)}
         </div>
       ),
       sortable: true,
@@ -184,7 +209,58 @@ const SellerApplications = () => {
         </p>
       </div>
 
-      <Card className="shadow-soft">
+      {/* Status overview cards */}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <Card className="p-4 bg-white shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Total</p>
+              <h3 className="text-2xl font-bold">{statusCounts.total}</h3>
+            </div>
+            <div className="p-2 bg-muted rounded-full">
+              <Briefcase className="h-5 w-5" />
+            </div>
+          </div>
+        </Card>
+        
+        <Card className="p-4 bg-amber-50 shadow-sm border-amber-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-amber-700">Pending</p>
+              <h3 className="text-2xl font-bold text-amber-600">{statusCounts.pending}</h3>
+            </div>
+            <div className="p-2 bg-amber-100 rounded-full">
+              <Clock className="h-5 w-5 text-amber-600" />
+            </div>
+          </div>
+        </Card>
+        
+        <Card className="p-4 bg-green-50 shadow-sm border-green-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-green-700">Approved</p>
+              <h3 className="text-2xl font-bold text-green-600">{statusCounts.approved}</h3>
+            </div>
+            <div className="p-2 bg-green-100 rounded-full">
+              <BadgeCheck className="h-5 w-5 text-green-600" />
+            </div>
+          </div>
+        </Card>
+        
+        <Card className="p-4 bg-red-50 shadow-sm border-red-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-red-700">Rejected</p>
+              <h3 className="text-2xl font-bold text-red-600">{statusCounts.rejected}</h3>
+            </div>
+            <div className="p-2 bg-red-100 rounded-full">
+              <X className="h-5 w-5 text-red-600" />
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <Card className="shadow-soft overflow-hidden">
         <DataTable
           columns={columns}
           data={applicationsData}
@@ -195,7 +271,7 @@ const SellerApplications = () => {
 
       {/* View Application Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Seller Application</DialogTitle>
             <DialogDescription>
@@ -209,19 +285,16 @@ const SellerApplications = () => {
                 {selectedApplication.avatarUrl && (
                   <img
                     src={selectedApplication.avatarUrl}
-                    alt={selectedApplication.name}
-                    className="h-16 w-16 rounded-full mr-4"
+                    alt={`${selectedApplication.firstName} ${selectedApplication.lastName}`}
+                    className="h-12 w-12 rounded-full mr-3"
                   />
                 )}
                 <div>
-                  <h3 className="text-lg font-semibold">
-                    {selectedApplication.name}
+                  <h3 className="text-base font-semibold">
+                    {selectedApplication.firstName} {selectedApplication.lastName}
                   </h3>
-                  <p className="text-muted-foreground">
-                    Applied on{" "}
-                    {new Date(
-                      selectedApplication.submittedAt
-                    ).toLocaleDateString()}
+                  <p className="text-sm text-muted-foreground">
+                    Applied on {formatDate(selectedApplication.submittedAt)}
                   </p>
                 </div>
                 <StatusBadge
@@ -234,101 +307,99 @@ const SellerApplications = () => {
 
               <Separator />
 
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-start">
-                  <User className="h-5 w-5 mr-2 text-muted-foreground mt-0.5" />
-                  <div>
-                    <Label className="text-muted-foreground">
-                      Personal Information
-                    </Label>
-                    <p className="font-medium">{selectedApplication.name}</p>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="bg-[#f5f0ea] p-4 rounded-lg">
+                  <div className="flex items-start">
+                    <User className="h-5 w-5 mr-2 text-muted-foreground" />
+                    <div>
+                      <Label className="text-sm text-muted-foreground font-medium">
+                        Personal Information
+                      </Label>
+                      <div className="grid grid-cols-2 gap-2 mt-1">
+                        <div>
+                          <p className="text-xs text-muted-foreground">First Name</p>
+                          <p className="font-medium">{selectedApplication.firstName}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Last Name</p>
+                          <p className="font-medium">{selectedApplication.lastName}</p>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <p className="text-xs text-muted-foreground">Username</p>
+                        <p className="font-medium">@{selectedApplication.username}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-start">
-                  <Mail className="h-5 w-5 mr-2 text-muted-foreground mt-0.5" />
-                  <div>
-                    <Label className="text-muted-foreground">Email</Label>
-                    <p className="font-medium">{selectedApplication.email}</p>
+                <div className="bg-[#f5f0ea] p-4 rounded-lg">
+                  <div className="flex items-start">
+                    <Mail className="h-5 w-5 mr-2 text-muted-foreground" />
+                    <div>
+                      <Label className="text-sm text-muted-foreground font-medium">
+                        Contact Information
+                      </Label>
+                      <div className="mt-1">
+                        <p className="text-xs text-muted-foreground">Email Address</p>
+                        <p className="font-medium">{selectedApplication.email}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-start">
-                  <Phone className="h-5 w-5 mr-2 text-muted-foreground mt-0.5" />
-                  <div>
-                    <Label className="text-muted-foreground">Phone</Label>
-                    <p className="font-medium">{selectedApplication.phone}</p>
+                <div className="bg-[#f5f0ea] p-4 rounded-lg">
+                  <div className="flex items-start">
+                    <Tag className="h-5 w-5 mr-2 text-muted-foreground" />
+                    <div>
+                      <Label className="text-sm text-muted-foreground font-medium">
+                        Product Specialization
+                      </Label>
+                      <div className="mt-1">
+                        <p className="text-xs text-muted-foreground">Main Category</p>
+                        <div className="font-medium mt-1">
+                          <span className="py-1 px-3 bg-[#8c6142] text-white rounded-full text-sm">
+                            {selectedApplication.category}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <Separator />
-
-                <div className="flex items-start">
-                  <Building className="h-5 w-5 mr-2 text-muted-foreground mt-0.5" />
-                  <div>
-                    <Label className="text-muted-foreground">
-                      Business Name
-                    </Label>
-                    <p className="font-medium">
-                      {selectedApplication.businessName || "Not provided"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <MapPin className="h-5 w-5 mr-2 text-muted-foreground mt-0.5" />
-                  <div>
-                    <Label className="text-muted-foreground">
-                      Business Address
-                    </Label>
-                    <p className="font-medium">
-                      {selectedApplication.businessAddress || "Not provided"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <CreditCard className="h-5 w-5 mr-2 text-muted-foreground mt-0.5" />
-                  <div>
-                    <Label className="text-muted-foreground">Tax ID</Label>
-                    <p className="font-medium">
-                      {selectedApplication.taxId || "Not provided"}
-                    </p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-start">
-                  <FileText className="h-5 w-5 mr-2 text-muted-foreground mt-0.5" />
-                  <div>
-                    <Label className="text-muted-foreground">
-                      Additional Notes
-                    </Label>
-                    <p className="text-sm">
-                      The applicant has provided all required documentation and
-                      information for review.
-                    </p>
+                <div className="bg-[#f5f0ea] p-4 rounded-lg">
+                  <div className="flex items-start">
+                    <FileText className="h-5 w-5 mr-2 text-muted-foreground" />
+                    <div>
+                      <Label className="text-sm text-muted-foreground font-medium">
+                        Background & Experience
+                      </Label>
+                      <div className="mt-1">
+                        <p className="text-sm">
+                          {selectedApplication.background}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className="mt-4 flex space-x-2">
             {selectedApplication?.status === "pending" && (
               <>
                 <Button
                   variant="outline"
                   onClick={() => handleReject(selectedApplication)}
-                  className="gap-1"
+                  className="gap-1 rounded-md"
                 >
                   <X className="h-4 w-4" />
                   Reject
                 </Button>
                 <Button
                   onClick={() => handleApprove(selectedApplication)}
-                  className="gap-1"
+                  className="gap-1 rounded-md bg-[#5A3A31] hover:bg-[#4a2a21]"
                 >
                   <BadgeCheck className="h-4 w-4" />
                   Approve

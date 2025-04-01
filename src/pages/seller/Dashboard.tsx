@@ -3,14 +3,16 @@ import SellerLayout from "@/components/Layout/SellerLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { PackageOpen, TrendingUp, Users } from "lucide-react";
+import { PackageOpen, TrendingUp, Users, Gavel, History, ArrowRight, BarChart2, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
+import MyBids from "./Dashboard/MyBids";
 
 export default function Dashboard() {
   const { user } = useAuth();
   
   // Sample metrics for the dashboard
   const metrics = {
-    totalSales: 5250,
+    totalItems: 5250,
     totalBidders: 28,
     activeAuctions: 3
   };
@@ -18,7 +20,7 @@ export default function Dashboard() {
   if (!user) {
     return (
       <SellerLayout>
-        <div className="container py-8">
+        <div className="py-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Seller Dashboard</h1>
             <p className="mb-4">Please log in to access your seller dashboard</p>
@@ -33,92 +35,86 @@ export default function Dashboard() {
 
   return (
     <SellerLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Seller Dashboard</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-[#5A3A31]">Dashboard</h1>
+          <p className="text-[#5A3A31]/60 mt-2">
             Welcome back, {user?.name}! Here's an overview of your auctions.
           </p>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
-              <TrendingUp className="h-4 w-4 text-[#AA8F66]" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="bg-gradient-to-br from-[#AA8F66]/10 to-[#AA8F66]/5 border-none shadow-md overflow-hidden">
+            <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-[#AA8F66]/10 to-transparent"></div>
+            <CardHeader className="relative z-10 flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-[#5A3A31] font-medium">Total Items</CardTitle>
+              <div className="h-8 w-8 rounded-md bg-[#AA8F66]/20 flex items-center justify-center">
+                <BarChart2 className="h-5 w-5 text-[#AA8F66]" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${metrics.totalSales.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">
-                +20.1% from last month
-              </p>
+            <CardContent className="relative z-10">
+              <div className="text-3xl font-bold text-[#5A3A31]">{metrics.totalItems}</div>
+              <div className="h-1 w-16 bg-[#AA8F66]/30 mt-3 rounded-full"></div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Bidders</CardTitle>
-              <Users className="h-4 w-4 text-[#AA8F66]" />
+          <Card className="bg-gradient-to-br from-[#AA8F66]/10 to-[#AA8F66]/5 border-none shadow-md overflow-hidden">
+            <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-[#AA8F66]/10 to-transparent"></div>
+            <CardHeader className="relative z-10 flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-[#5A3A31] font-medium">Total Bidders</CardTitle>
+              <div className="h-8 w-8 rounded-md bg-[#AA8F66]/20 flex items-center justify-center">
+                <Users className="h-5 w-5 text-[#AA8F66]" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{metrics.totalBidders}</div>
-              <p className="text-xs text-muted-foreground">
-                +12.5% from last month
-              </p>
+            <CardContent className="relative z-10">
+              <div className="text-3xl font-bold text-[#5A3A31]">{metrics.totalBidders}</div>
+              <div className="h-1 w-16 bg-[#AA8F66]/30 mt-3 rounded-full"></div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Auctions</CardTitle>
-              <PackageOpen className="h-4 w-4 text-[#AA8F66]" />
+          <Card className="bg-gradient-to-br from-[#AA8F66]/10 to-[#AA8F66]/5 border-none shadow-md overflow-hidden">
+            <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-[#AA8F66]/10 to-transparent"></div>
+            <CardHeader className="relative z-10 flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-[#5A3A31] font-medium">Active Auctions</CardTitle>
+              <div className="h-8 w-8 rounded-md bg-[#AA8F66]/20 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-[#AA8F66]" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{metrics.activeAuctions}</div>
-              <p className="text-xs text-muted-foreground">
-                +2 new this month
-              </p>
+            <CardContent className="relative z-10">
+              <div className="text-3xl font-bold text-[#5A3A31]">{metrics.activeAuctions}</div>
+              <div className="h-1 w-16 bg-[#AA8F66]/30 mt-3 rounded-full"></div>
             </CardContent>
           </Card>
         </div>
         
-        {/* Seller Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Seller Overview</CardTitle>
-            <CardDescription>
-              Your seller account summary and performance
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex flex-col items-center md:items-start">
-                <Avatar className="h-20 w-20 mb-2">
-                  <AvatarFallback className="bg-[#AA8F66] text-white text-xl">
-                    {user.name?.split(" ").map(n => n[0]).join("").toUpperCase() || "SU"}
-                  </AvatarFallback>
-                </Avatar>
-                <h3 className="text-lg font-medium">{user.name}</h3>
-                <p className="text-sm text-muted-foreground">@{user.username}</p>
-              </div>
-              
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium mb-2">Account Type</h4>
-                  <div className="text-sm flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-medium rounded-full bg-[#AA8F66]/10 text-[#AA8F66] border border-[#AA8F66]/20">
-                      Verified Seller
-                    </span>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="text-sm font-medium mb-2">Member Since</h4>
-                  <p className="text-sm">January 2023</p>
-                </div>
-              </div>
+        {/* Account Type */}
+        <Card className="border border-[#AA8F66]/10 shadow-sm overflow-hidden">
+          <div className="flex items-center p-6">
+            <div className="text-sm text-[#5A3A31]">
+              Account Type: 
+              <span className="ml-2 inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-[#AA8F66]/10 text-[#AA8F66] border border-[#AA8F66]/20">
+                Seller @{user.username}
+              </span>
             </div>
+          </div>
+        </Card>
+        
+        {/* My Bids Section */}
+        <Card className="border border-[#AA8F66]/10 shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-[#AA8F66]/10 bg-[#FDFBF8]">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-[#5A3A31] text-lg">My Bids</CardTitle>
+                <CardDescription className="text-[#5A3A31]/60 mt-1">
+                  Track your auction bids and payments
+                </CardDescription>
+              </div>
+              <History className="h-5 w-5 text-[#AA8F66]" />
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <MyBids />
           </CardContent>
         </Card>
       </div>

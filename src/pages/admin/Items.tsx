@@ -95,31 +95,6 @@ const Items = () => {
     }
   };
 
-  const handleAddItem = () => {
-    const sellers = users.filter(
-      (user) => user.role === "seller" && user.status === "active"
-    );
-    if (sellers.length === 0) {
-      toast.error("No active sellers found. Please add a seller first.");
-      return;
-    }
-
-    const defaultSeller = sellers[0];
-
-    form.reset({
-      id: "",
-      name: "",
-      description: "",
-      price: 0,
-      sellerId: defaultSeller.id,
-      sellerName: defaultSeller.name,
-      status: "pending",
-      category: "",
-      createdAt: new Date(),
-    });
-    setIsAddDialogOpen(true);
-  };
-
   const onSubmit = (data: Item) => {
     if (isEditDialogOpen) {
       // Update existing item
@@ -240,13 +215,6 @@ const Items = () => {
           <h1 className="text-2xl font-bold tracking-tight">Items</h1>
           <p className="text-muted-foreground">Manage auction items</p>
         </div>
-        <Button 
-          onClick={handleAddItem} 
-          className="gap-1 bg-[#AA8F66] hover:bg-[#AA8F66]/90 text-white"
-        >
-          <PackagePlus className="h-4 w-4" />
-          Add Item
-        </Button>
       </div>
 
       <Card className="shadow-soft">

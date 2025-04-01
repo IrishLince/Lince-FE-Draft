@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { User, Lock, CreditCard } from "lucide-react";
+import { User, Lock } from "lucide-react";
 
 export default function SellerProfile() {
   const { user, logout } = useAuth();
@@ -17,7 +17,6 @@ export default function SellerProfile() {
   
   // Determine active page based on URL path
   const getActivePageFromPath = () => {
-    if (location.pathname.includes('/payment')) return "payment";
     if (location.pathname.includes('/security')) return "security";
     return "profile";
   };
@@ -33,15 +32,11 @@ export default function SellerProfile() {
   const [profileData, setProfileData] = useState({
     username: user?.username || "",
     name: user?.name || "",
+    firstName: user?.name?.split(" ")[0] || "",
+    lastName: user?.name?.split(" ")[1] || "",
     email: user?.email || "",
     bio: "Professional art seller specializing in contemporary and abstract works. Established gallery owner since 2015.",
-    phone: "",
-    companyName: "Art Gallery Studio",
-    paymentDetails: {
-      bankName: "",
-      accountNumber: "",
-      routingNumber: "",
-    }
+    phone: ""
   });
   
   const getInitials = (name: string = "") => {
@@ -152,7 +147,7 @@ export default function SellerProfile() {
               <p className="text-sm text-gray-500 mb-3">@{user?.username || "seller"}</p>
               
               <div className="inline-flex items-center justify-center px-3 py-1 mb-3 text-xs font-medium rounded-full bg-[#AA8F66]/10 text-[#AA8F66] border border-[#AA8F66]/20">
-                Verified Seller
+                Seller
               </div>
               
               <p className="text-sm text-gray-600 mt-2 mb-4">
@@ -160,10 +155,7 @@ export default function SellerProfile() {
               </p>
               
               <div className="w-full mt-4 text-left space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Company:</span>
-                  <span className="text-sm font-medium text-gray-800">{profileData.companyName}</span>
-                </div>
+                {/* Account type section removed as requested */}
               </div>
               
               <Button 
@@ -196,11 +188,11 @@ export default function SellerProfile() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-gray-700">Full Name</Label>
+                      <Label htmlFor="firstName" className="text-gray-700">First Name</Label>
                       <Input
-                        id="name"
-                        name="name"
-                        value={profileData.name}
+                        id="firstName"
+                        name="firstName"
+                        value={profileData.firstName}
                         onChange={handleProfileInputChange}
                         className="border-gray-200 focus:border-[#AA8F66] focus:ring-[#AA8F66]"
                       />
@@ -208,6 +200,16 @@ export default function SellerProfile() {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName" className="text-gray-700">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        name="lastName"
+                        value={profileData.lastName}
+                        onChange={handleProfileInputChange}
+                        className="border-gray-200 focus:border-[#AA8F66] focus:ring-[#AA8F66]"
+                      />
+                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-gray-700">Email</Label>
                       <Input
@@ -219,27 +221,6 @@ export default function SellerProfile() {
                         className="border-gray-200 focus:border-[#AA8F66] focus:ring-[#AA8F66]"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-gray-700">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={profileData.phone}
-                        onChange={handleProfileInputChange}
-                        className="border-gray-200 focus:border-[#AA8F66] focus:ring-[#AA8F66]"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName" className="text-gray-700">Company/Gallery Name</Label>
-                    <Input
-                      id="companyName"
-                      name="companyName"
-                      value={profileData.companyName}
-                      onChange={handleProfileInputChange}
-                      className="border-gray-200 focus:border-[#AA8F66] focus:ring-[#AA8F66]"
-                    />
                   </div>
                   
                   <div className="space-y-2">
@@ -261,90 +242,6 @@ export default function SellerProfile() {
                       disabled={isLoading}
                     >
                       {isLoading ? "Updating..." : "Update Profile"}
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            )}
-            
-            {activePage === "payment" && (
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Payment Information</h3>
-                
-                <form onSubmit={handleUpdateProfile} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="paymentDetails.bankName" className="text-gray-700">Bank Name</Label>
-                    <Input
-                      id="paymentDetails.bankName"
-                      name="paymentDetails.bankName"
-                      value={profileData.paymentDetails.bankName}
-                      onChange={handleProfileInputChange}
-                      className="border-gray-200 focus:border-[#AA8F66] focus:ring-[#AA8F66]"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="paymentDetails.accountNumber" className="text-gray-700">Account Number</Label>
-                      <Input
-                        id="paymentDetails.accountNumber"
-                        name="paymentDetails.accountNumber"
-                        value={profileData.paymentDetails.accountNumber}
-                        onChange={handleProfileInputChange}
-                        className="border-gray-200 focus:border-[#AA8F66] focus:ring-[#AA8F66]"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="paymentDetails.routingNumber" className="text-gray-700">Routing Number</Label>
-                      <Input
-                        id="paymentDetails.routingNumber"
-                        name="paymentDetails.routingNumber"
-                        value={profileData.paymentDetails.routingNumber}
-                        onChange={handleProfileInputChange}
-                        className="border-gray-200 focus:border-[#AA8F66] focus:ring-[#AA8F66]"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <h4 className="text-lg font-semibold text-gray-800 mb-3">Payment History</h4>
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="bg-gray-50">
-                            <th className="text-left p-4 text-gray-700 font-medium">Date</th>
-                            <th className="text-left p-4 text-gray-700 font-medium">Amount</th>
-                            <th className="text-left p-4 text-gray-700 font-medium">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="border-t border-gray-200">
-                            <td className="p-4">01/15/2024</td>
-                            <td className="p-4 text-[#3A5A31]">$1,250.00</td>
-                            <td className="p-4 text-green-600">Completed</td>
-                          </tr>
-                          <tr className="border-t border-gray-200">
-                            <td className="p-4">12/22/2023</td>
-                            <td className="p-4 text-[#3A5A31]">$850.00</td>
-                            <td className="p-4 text-green-600">Completed</td>
-                          </tr>
-                          <tr className="border-t border-gray-200">
-                            <td className="p-4">11/30/2023</td>
-                            <td className="p-4 text-[#3A5A31]">$2,100.00</td>
-                            <td className="p-4 text-green-600">Completed</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Button 
-                      className="w-full bg-[#AA8F66] hover:bg-[#AA8F66]/90 text-white mt-4" 
-                      type="submit" 
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Updating..." : "Update Payment Information"}
                     </Button>
                   </div>
                 </form>
